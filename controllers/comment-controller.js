@@ -15,7 +15,9 @@ const addComments = async (req, res, next) => {
     }
 
     const leadId = req.params.id
-    const { salesAgentId, author, commentText } = req.body
+    const { author, commentText } = req.body
+
+
 
     try {
         const existingLead = await Lead.findById(leadId)
@@ -23,18 +25,21 @@ const addComments = async (req, res, next) => {
         if (!existingLead) {
             return next(new HttpError(`Lead doesn't exist with that ${leadId}`, 404))
         }
-        const existingSalesAgent = await SalesAgent.findById(salesAgentId)
+        const existingSalesAgent = await SalesAgent.findById(author)
 
         if (!existingSalesAgent) {
-            return next(new HttpError(`Sales agent doesn't exist with that ${salesAgentId}`, 404))
+            return next(new HttpError(`Sales agent doesn't exist with that ${author}`, 404))
         }
 
 
 
-        const newComment = new Comment({ salesAgentId, leadId, author, commentText })
+        const newComment = new Comment({ lead: leadId, author, commentText })
         const savedComment = await newComment.save()
 
+        
         res.status(201).json({ success: true, message: "New comment added successfully.", commentText: savedComment.toObject({ getters: true }) })
+   
+   
     } catch (error) {
         next(error)
     }

@@ -21,7 +21,6 @@ const getAllLeadsClosedLastWeek = async (req, res, next) => {
             }));
 
 
-            console.log(leads)
             res.status(201).json({ success: true, message: "All leads find successfully that closed last week", leads: response })
         } else {
             return next(new HttpError("No lead find that closed last week.", 404))
@@ -36,8 +35,11 @@ const getTotalLeadsInPipeline = async (req, res, next) => {
     try {
 
         const activeLeads = await Lead.countDocuments({ status: { $ne: "Closed" } })
+        const closedLeads = await Lead.countDocuments({ status: "Closed" })
 
-        res.status(200).json({ success: true, totalLeadsInPipeline: activeLeads })
+        // console.log(closedLeads)
+
+        res.status(200).json({ activeLeads, closedLeads })
 
     } catch (error) {
         return next(error)
@@ -47,9 +49,6 @@ const getTotalLeadsInPipeline = async (req, res, next) => {
 const getLeadsClosedByAgent = async (req, res, next) => {
     try {
         const leads = await Lead.find({ status: "Closed" }).populate("salesAgent")
-
-
-
         const closedByAgent = leads.reduce((acc, lead) => {
 
             if (lead.status !== "Closed") return acc;
@@ -79,6 +78,8 @@ const getLeadsClosedByAgent = async (req, res, next) => {
         next(error)
     }
 }
+
+
 
 
 module.exports = { getAllLeadsClosedLastWeek, getTotalLeadsInPipeline, getLeadsClosedByAgent }

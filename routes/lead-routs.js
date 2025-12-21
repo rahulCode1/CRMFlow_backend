@@ -113,12 +113,7 @@ const commentValidation = [
         .withMessage("Comment text is required")
         .isLength({ min: 3, max: 500 })
         .withMessage("Comment must be between 3 and 500 characters"),
-    body("salesAgentId")
-        .notEmpty()
-        .withMessage("Sales agent id is required")
-        .isMongoId()
-        .withMessage("Invalid sales agent id"),
-
+    
     body("author")
         .trim()
         .notEmpty()

@@ -1,6 +1,6 @@
 const express = require("express")
 const router = express.Router()
-const { addNewSalesAgent, getAllSalesAgents } = require("../controllers/salesAgent-controller")
+const { addNewSalesAgent, getAllSalesAgents , deleteSalesAgent} = require("../controllers/salesAgent-controller")
 const { body } = require("express-validator")
 const salesAgentValidation = [
     body("name").trim().notEmpty().withMessage("Name must be present."),
@@ -10,5 +10,6 @@ const salesAgentValidation = [
 
 router.post("/", salesAgentValidation, addNewSalesAgent)
 router.get("/", getAllSalesAgents)
+router.delete("/:id", deleteSalesAgent)
 
 module.exports = router 

@@ -1,7 +1,7 @@
-const { validationResult, query } = require("express-validator")
+const { default: mongoose } = require("mongoose")
+const { validationResult } = require("express-validator")
 const HttpError = require("../models/http-error")
 const Lead = require("../models/leads-model")
-const { default: mongoose } = require("mongoose")
 const SalesAgent = require("../models/salesAgents-model")
 const Comment = require("../models/comment-model")
 
@@ -15,7 +15,7 @@ const addLeads = async (req, res, next) => {
         }))))
     }
 
-    const { name, source, salesAgent, status, tags, timeToClose, priority } = req.body
+    const { name, source, salesAgent, status, tags, timeToClose, priority, closedAt } = req.body
 
     try {
 
@@ -26,7 +26,7 @@ const addLeads = async (req, res, next) => {
         }
 
 
-        const newLead = new Lead({ name, source, salesAgent, status, tags, timeToClose, priority })
+        const newLead = new Lead({ name, source, salesAgent, status, tags, timeToClose, priority, closedAt })
         const savedLead = await newLead.save()
 
         if (savedLead) {
@@ -50,8 +50,6 @@ const getAllLeads = async (req, res, next) => {
             message: err.msg
         }))))
     }
-
-
     let filter = {}
 
     if (salesAgent) filter.salesAgent = salesAgent
@@ -64,7 +62,8 @@ const getAllLeads = async (req, res, next) => {
 
 
     try {
-        const leads = await Lead.find(filter)
+        const leads = await Lead.find(filter).populate("salesAgent").sort({ createdAt: -1 })
+
 
         res.status(200).json({ leads: leads.map(lead => lead.toObject({ getters: true })) })
     } catch (error) {
@@ -98,7 +97,7 @@ const updateLeads = async (req, res, next) => {
 
     try {
         const updatedLead = await Lead.findByIdAndUpdate(leadsId, dataToUpdate, { new: true })
-        console.log(updatedLead)
+
 
 
         if (updatedLead) {
@@ -114,28 +113,19 @@ const updateLeads = async (req, res, next) => {
 }
 
 const deleteLead = async (req, res, next) => {
-    const leadsId = req.params.id
-
-    if (!leadsId) {
-        return next(new HttpError("Please provide leads id to delete.", 404))
-    }
-
-    if (!mongoose.Types.ObjectId.isValid(leadsId)) {
-        return next(
-            new HttpError("Invalid lead ID format", 400)
-        );
-    }
-
+    const leadId = req.params.id
     try {
-        const deletedLead = await Lead.findByIdAndDelete(leadsId)
-        if (deletedLead) {
-            res.status(200).json({ success: true, message: "Lead deleted successfully.", deletedLead })
-        } else {
-            return next(new HttpError(`Lead with ID ${leadsId} not found.`, 404))
+
+        const lead = await Lead.findById(leadId);
+        if (!lead) {
+            return next(new HttpError("No lead exists with that id.", 404));
         }
 
+        await Comment.deleteMany({ lead: leadId })
+        await lead.deleteOne();
+        res.status(200).json({ success: true, message: `Lead & related comments deleted successfully.`, deleteLead: lead })
     } catch (error) {
-        return next(new HttpError(error.message || "Failed to delete lead.", 500))
+        next(error)
     }
 }
 
@@ -184,18 +174,10 @@ const getLeadDetails = async (req, res, next) => {
             message: err.msg
         }))))
     }
-
-
-
     const leadId = req.params.id
-
-
-
     try {
         const lead = await Lead.findById(leadId).populate("salesAgent")
-
-        const comments = await Comment.find({ leadId })
-
+        const comments = await Comment.find({ lead: leadId }).populate("lead").populate("author")
 
 
         if (lead) {

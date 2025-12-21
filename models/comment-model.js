@@ -1,13 +1,27 @@
 const mongoose = require("mongoose")
 
 
-const commentModel = new mongoose.Schema({
-    leadId: { type: mongoose.Types.ObjectId, required: true, ref: "Lead" },
-    salesAgentId: { type: mongoose.Types.ObjectId, required: true, ref: "SalesAgent" },
-    commentText: { type: String, required: true },
-    author: { type: String, required: true }
-})
+const commentSchema = new mongoose.Schema({
+  lead: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Lead',  // Reference to the Lead model
+    required: [true, 'Lead reference is required'],
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'SalesAgent',  // Reference to the SalesAgent who authored the comment
+    required: [true, 'Author is required'],
+  },
+  commentText: {
+    type: String,
+    required: [true, 'Comment text is required'],
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,  // Automatically set the creation time
+  }
+});
 
 
-const Comment = mongoose.model("Comment", commentModel)
+const Comment = mongoose.model("Comment", commentSchema)
 module.exports = Comment
