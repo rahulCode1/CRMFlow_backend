@@ -49,11 +49,15 @@ const getTotalLeadsInPipeline = async (req, res, next) => {
 const getLeadsClosedByAgent = async (req, res, next) => {
     try {
         const leads = await Lead.find({ status: "Closed" }).populate("salesAgent")
+
+
+       
+
         const closedByAgent = leads.reduce((acc, lead) => {
 
             if (lead.status !== "Closed") return acc;
 
-            const agentName = lead.salesAgent.name;
+            const agentName = lead.salesAgent ?  lead.salesAgent.name : "Unknown"
 
 
             if (!acc[agentName]) {
@@ -66,6 +70,9 @@ const getLeadsClosedByAgent = async (req, res, next) => {
             return acc;
         }, {});
 
+       
+
+        
         const response = Object.entries(closedByAgent).map(
             ([agent, count]) => ({
                 salesAgent: agent,

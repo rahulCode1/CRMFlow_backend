@@ -129,40 +129,7 @@ const deleteLead = async (req, res, next) => {
     }
 }
 
-const updateLeadStatus = async (req, res, next) => {
-    const errors = validationResult(req)
-    if (!errors.isEmpty()) {
-        return next(new HttpError("Invalid input data to update lead status.", 400, errors.array().map(err => ({
-            field: err.path,
-            message: err.msg
-        }))))
-    }
-    const leadId = req.params.id
-    const { status, salesAgent } = req.body
-    const update = { status, salesAgent }
 
-    if (status === "Closed") {
-        update.closedAt = new Date()
-    }
-
-    const isSalesAgentExist = await SalesAgent.findById(salesAgent)
-
-    if (!isSalesAgentExist) {
-        return next(new HttpError(`No sales agent found with ${salesAgent} id.`, 404))
-    }
-
-    try {
-        const updateCloseTime = await Lead.findByIdAndUpdate(leadId, update, { new: true })
-
-        if (updateCloseTime) {
-            res.status(201).json({ success: true, message: "Lead close time update successfully.", lead: updateCloseTime })
-        } else {
-            return next(new HttpError("Lead not found to update status.", 404))
-        }
-    } catch (error) {
-        next(error)
-    }
-}
 
 const getLeadDetails = async (req, res, next) => {
 
@@ -194,6 +161,5 @@ module.exports = {
     getAllLeads,
     updateLeads,
     deleteLead,
-    updateLeadStatus,
     getLeadDetails
 }

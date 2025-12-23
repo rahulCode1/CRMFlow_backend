@@ -1,7 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const { body, query, param } = require("express-validator")
-const { addLeads, getAllLeads, updateLeads, deleteLead, getLeadDetails, updateLeadStatus } = require("../controllers/leads-controller")
+const { addLeads, getAllLeads, updateLeads, deleteLead, getLeadDetails } = require("../controllers/leads-controller")
 const { addComments, getAllComments } = require("../controllers/comment-controller")
 
 
@@ -144,7 +144,6 @@ router.get("/", queryValidation, getAllLeads)
 router.get("/:id", paramIdValidation, getLeadDetails)
 router.get("/:id/comments", paramIdValidation, getAllComments)
 router.patch("/:id", leadsValidationToUpdate, updateLeads)
-router.patch("/:id/update", validateStatusUpdate, updateLeadStatus)
 router.delete("/:id", deleteLead)
 
 

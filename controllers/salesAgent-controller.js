@@ -1,8 +1,7 @@
 const { validationResult } = require("express-validator")
 const SalesAgent = require("../models/salesAgents-model")
 const HttpError = require("../models/http-error")
-const Comment = require("../models/comment-model")
-const Lead = require("../models/leads-model")
+
 
 const addNewSalesAgent = async (req, res, next) => {
     const errors = validationResult(req)
@@ -55,21 +54,7 @@ const deleteSalesAgent = async (req, res, next) => {
         if (!existingAgent) {
             return next(new HttpError(`No sales agent exist with that id ${agentId}`, 404))
         }
-        const isExistingLeads = await Lead.countDocuments({ salesAgent: agentId })
-
-        if (isExistingLeads > 0) {
-            return next(new HttpError("Cannot delete agent. Leads are still assigned", 409))
-        }
-
-        console.log(isExistingLeads)
-
-        const isExistingComments = await Comment.countDocuments({ author: agentId })
-
-        if (isExistingComments > 0) {
-            return next(new HttpError("Cannot delete agent. Comments are still present.", 409))
-        }
-
-
+      
 
         await existingAgent.deleteOne()
 
