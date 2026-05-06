@@ -126,17 +126,6 @@ const paramIdValidation = [
     param("id").notEmpty().withMessage("Please provide lead id").isMongoId().withMessage("Invalid lead id."),
 ]
 
-const validateStatusUpdate = [
-    param("id").notEmpty().withMessage("Please provide lead id").isMongoId().withMessage("Invalid lead id."),
-    body("status").trim().notEmpty().withMessage("Status must be present.").isIn(["New", "Contacted", "Qualified", "Proposal Sent", "Closed"])
-        .withMessage("Invalid input: 'status' must be one of ['New', 'Contacted', 'Qualified', 'Proposal Sent', 'Closed']."),
-
-    body("salesAgent")
-        .notEmpty()
-        .withMessage("Please provide sales id").isMongoId().withMessage("Invalid sales agent id"),
-
-
-]
 
 router.post("/", leadsValidation, addLeads)
 router.post("/:id/comments", commentValidation, addComments)

@@ -17,6 +17,8 @@ const addLeads = async (req, res, next) => {
 
     const { name, source, salesAgent, status, tags, timeToClose, priority, closedAt } = req.body
 
+    console.log(name, source)
+    
     try {
 
         const existingSalesAgent = await SalesAgent.findById(salesAgent)
