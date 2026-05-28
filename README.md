@@ -1,4 +1,4 @@
-# Leads Management
+# Anvaya
 
 An RESET API for leads management, where you can browse,  add, edit & view details of leads.
 Built with  Express/Node backend, Mongodb database.
