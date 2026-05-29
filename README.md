@@ -1,4 +1,4 @@
-# Anvaya
+# CRMFlow
 
 An RESET API for leads management, where you can browse,  add, edit & view details of leads.
 Built with  Express/Node backend, Mongodb database.
@@ -7,14 +7,14 @@ Built with  Express/Node backend, Mongodb database.
 
 ## Demo Link
 
-[Live API](https://github.com/rahulCode1/Anvaya-backend.git)
+[Live API](https://crm-flow-backend.vercel.app/api/leads)
 
 ---
 
 ## Quick Start
 
 ```
-git clone  https://github.com/rahulCode1/Anvaya-backend.git
+git clone  https://github.com/rahulCode1/CRMFlow_backend.git
 cd backend
 npm install
 npm start
