@@ -3,6 +3,7 @@ const router = express.Router()
 const { body, query, param } = require("express-validator")
 const { addLeads, getAllLeads, updateLeads, deleteLead, getLeadDetails } = require("../controllers/leads-controller")
 const { addComments, getAllComments } = require("../controllers/comment-controller")
+const authCheck = require("../middlewares/auth_check")
 
 
 const leadsValidation = [
@@ -127,13 +128,13 @@ const paramIdValidation = [
 ]
 
 
-router.post("/", leadsValidation, addLeads)
+router.post("/", leadsValidation, authCheck,  addLeads)
 router.post("/:id/comments", commentValidation, addComments)
 router.get("/", queryValidation, getAllLeads)
 router.get("/:id", paramIdValidation, getLeadDetails)
 router.get("/:id/comments", paramIdValidation, getAllComments)
-router.patch("/:id", leadsValidationToUpdate, updateLeads)
-router.delete("/:id", deleteLead)
+router.patch("/:id", leadsValidationToUpdate, authCheck, updateLeads)
+router.delete("/:id", authCheck, deleteLead)
 
 
 module.exports = router 
