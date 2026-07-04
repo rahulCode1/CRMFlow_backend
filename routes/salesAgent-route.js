@@ -7,6 +7,7 @@ const {
 } = require("../controllers/salesAgent-controller");
 const { body } = require("express-validator");
 const authCheck = require("../middlewares/auth_check");
+const fileUpload = require("../middlewares/file-upload");
 
 const salesAgentValidation = [
   body("name").trim().notEmpty().withMessage("Name must be present."),
@@ -20,7 +21,13 @@ const salesAgentValidation = [
     .normalizeEmail(),
 ];
 
-router.post("/", salesAgentValidation, authCheck, addNewSalesAgent);
+router.post(
+  "/",
+  fileUpload.single("image"),
+  salesAgentValidation,
+  authCheck,
+  addNewSalesAgent,
+);
 router.get("/", getAllSalesAgents);
 router.delete("/:id", authCheck, deleteSalesAgent);
 
